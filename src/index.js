@@ -4,13 +4,16 @@ const express = require('express');
 const userRoutes = require('./routes/user.routes');
 const categoryRoutes = require('./routes/category.routes');
 const tagRoutes = require('./routes/tag.routes');
+const taskRoutes = require('./routes/task.routes');
 
 const app = express();
 
 app.use(express.json());
+
 app.use('/api/users', userRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/tags', tagRoutes);
+app.use('/api/tasks', taskRoutes);
 
 app.get('/', (req, res) => {
     res.json({
@@ -28,6 +31,5 @@ app.use((req, res) => {
 const PORT = 3000;
 
 app.listen(PORT, () => {
-    console.log(`Servidor ejecut·ndose en http://localhost:${PORT}`);
+    console.log(`Servidor ejecut√°ndose en http://localhost:${PORT}`);
 });
-
