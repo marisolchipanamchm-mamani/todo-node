@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const { randomUUID } = require('crypto');
 const pool = require('../db/connection');
+const userDecorator = require('../decorators/user.decorator');
 
 const createUser = async (req, res) => {
     try {
@@ -33,11 +34,11 @@ const createUser = async (req, res) => {
 
         res.status(201).json({
             mensaje: 'Usuario creado correctamente',
-            usuario: {
-                id,
-                name,
-                email
-            }
+            usuario: userDecorator({
+              id,
+              name,
+             email
+             })
         });
     } catch (error) {
         console.error(error);
