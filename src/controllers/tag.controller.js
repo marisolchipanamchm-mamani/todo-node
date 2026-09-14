@@ -9,7 +9,9 @@ const getTags = async (req, res) => {
             [req.user.id]
         );
 
-        res.json(tags);
+        res.json({
+            data: tags
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({
@@ -48,8 +50,9 @@ const createTag = async (req, res) => {
         );
 
         res.status(201).json({
-            mensaje: 'Etiqueta creada correctamente',
-            etiqueta: {
+            success: true,
+            message: 'Etiqueta creada correctamente.',
+            data: {
                 id,
                 name,
                 user_id: req.user.id
@@ -109,7 +112,8 @@ const updateTag = async (req, res) => {
         }
 
         res.json({
-            mensaje: 'Etiqueta actualizada correctamente'
+            success: true,
+            message: 'Etiqueta actualizada correctamente.'
         });
     } catch (error) {
         console.error(error);
@@ -134,7 +138,8 @@ const deleteTag = async (req, res) => {
         }
 
         res.json({
-            mensaje: 'Etiqueta eliminada correctamente'
+            success: true,
+            message: 'Etiqueta eliminada correctamente.'
         });
     } catch (error) {
         console.error(error);

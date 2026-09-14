@@ -9,7 +9,9 @@ const getCategories = async (req, res) => {
             [req.user.id]
         );
 
-        res.json(categories);
+        res.json({
+            data: categories
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({
@@ -48,9 +50,10 @@ const createCategory = async (req, res) => {
         );
 
         res.status(201).json({
-            mensaje: 'Categoría creada correctamente',
-            categoria: {
-                id,
+            success: true,
+            message: 'Categoría creada correctamente.',
+            data: {
+                id: id,
                 name,
                 user_id: req.user.id
             }
@@ -109,7 +112,8 @@ const updateCategory = async (req, res) => {
         }
 
         res.json({
-            mensaje: 'Categoría actualizada correctamente'
+            success: true,
+            message: 'Categoría actualizada correctamente.'
         });
     } catch (error) {
         console.error(error);
@@ -134,7 +138,8 @@ const deleteCategory = async (req, res) => {
         }
 
         res.json({
-            mensaje: 'Categoría eliminada correctamente'
+            success: true,
+            message: 'Categoría eliminada correctamente.'
         });
     } catch (error) {
         console.error(error);

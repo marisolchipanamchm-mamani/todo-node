@@ -1,4 +1,3 @@
-
 const { randomUUID } = require('crypto');
 const pool = require('../db/connection');
 
@@ -7,7 +6,14 @@ const createTask = async (req, res) => {
     const connection = await pool.getConnection();
 
     try {
-        const { title, description, status, category_id, tag_ids } = req.body;
+        const {
+            title,
+            description,
+            status,
+            category_id,
+            tag_ids,
+            completed
+        } = req.body;
 
         if (!title || !category_id) {
             connection.release();
@@ -17,7 +23,12 @@ const createTask = async (req, res) => {
             });
         }
 
-        const taskStatus = status || 'Pendiente';
+        const taskStatus = status !== undefined
+            ? status
+            : completed
+                ? 'Completada'
+                : 'Pendiente';
+
         const taskId = randomUUID();
 
         await connection.beginTransaction();
@@ -80,14 +91,16 @@ const createTask = async (req, res) => {
         connection.release();
 
         res.status(201).json({
-            mensaje: 'Tarea creada correctamente',
-            tarea: {
+            success: true,
+            message: 'Tarea creada correctamente.',
+            data: {
                 id: taskId,
                 title,
                 description: description || null,
                 status: taskStatus,
                 category_id,
                 user_id: req.user.id,
+                completed: taskStatus === 'Completada',
                 tag_ids: tag_ids || []
             }
         });
@@ -145,7 +158,13 @@ const getTasks = async (req, res) => {
             task.tags = tags;
         }
 
-        res.json(tasks);
+        for (const task of tasks) {
+            task.completed = task.status === 'Completada';
+        }
+
+        res.json({
+            data: tasks
+        });
     } catch (error) {
         console.error(error);
 
@@ -197,8 +216,17 @@ const getTaskById = async (req, res) => {
         );
 
         task.tags = tags;
+        task.completed = task.status === 'Completada';
 
-        res.json(task);
+        res.json({
+            data: {
+                ...task,
+                category: {
+                    id: task.category_id,
+                    name: task.category_name
+                }
+            }
+        });
     } catch (error) {
         console.error(error);
 
@@ -314,7 +342,8 @@ const updateTask = async (req, res) => {
         connection.release();
 
         res.json({
-            mensaje: 'Tarea actualizada correctamente'
+            success: true,
+            message: 'Tarea actualizada correctamente.'
         });
     } catch (error) {
         try {
@@ -348,7 +377,8 @@ const deleteTask = async (req, res) => {
         }
 
         res.json({
-            mensaje: 'Tarea eliminada correctamente'
+            success: true,
+            message: 'Tarea eliminada correctamente.'
         });
     } catch (error) {
         console.error(error);
